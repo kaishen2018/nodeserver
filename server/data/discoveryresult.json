@@ -1,0 +1,57 @@
+[{
+  "icon": "cube",
+  "tag": "Cube",
+  "cit": "Apache1",
+  "created": 2,
+  "updated": 4,
+  "deleted": 11,
+  "discovered": 11
+}, {
+  "icon": "cubes",
+  "tag": "Cube",
+  "cit": "Apache2",
+  "created": 2,
+  "updated": 4,
+  "deleted": 11,
+  "discovered": 11
+}, {
+  "icon": "Configuration",
+  "tag": "Cube",
+  "cit": "Apache3",
+  "created": 2,
+  "updated": 4,
+  "deleted": 11,
+  "discovered": 11
+}, {
+  "icon": "host",
+  "tag": "Cube",
+  "cit": "Apache4",
+  "created": 2,
+  "updated": 4,
+  "deleted": 11,
+  "discovered": 11
+}, {
+  "icon": "cubes",
+  "tag": "Cube",
+  "cit": "Apache5",
+  "created": 2,
+  "updated": 4,
+  "deleted": 11,
+  "discovered": 11
+}, {
+  "icon": "Configuration",
+  "tag": "Cube",
+  "cit": "Apache6",
+  "created": 2,
+  "updated": 4,
+  "deleted": 11,
+  "discovered": 11
+}, {
+  "icon": "host",
+  "tag": "Cube",
+  "cit": "Apache7",
+  "created": 2,
+  "updated": 4,
+  "deleted": 11,
+  "discovered": 11
+}]

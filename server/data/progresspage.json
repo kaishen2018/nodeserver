@@ -1,0 +1,65 @@
+[{
+  "job": "IntegrationService1",
+  "progress": 44,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}, {
+  "job": "IntegrationService2",
+  "progress": 40,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}, {
+  "job": "IntegrationService3",
+  "progress": 40,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}, {
+  "job": "IntegrationService4",
+  "progress": 40,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}, {
+  "job": "IntegrationService5",
+  "progress": 40,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}, {
+  "job": "IntegrationService6",
+  "progress": 0,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}, {
+  "job": "IntegrationService7",
+  "progress": 0,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}, {
+  "job": "IntegrationService8",
+  "progress": 0,
+  "thread": 2,
+  "triggered": 4,
+  "discovered": 11,
+  "nextInvocation": "--",
+  "previousInvocation": "--"
+}]
