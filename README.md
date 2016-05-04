@@ -5,6 +5,8 @@ This server is used to build a simple node webserver, which will read the json d
 ### 1: run cmd:   
     npm install
 ### 2: run cmd:   
-    node run server/restful.js
+    node server/restful.js
+### 2 another option run command:
+    npm start
 
 then the server is up now, you can visit the URL:  http://localhost:8010/progresspage
