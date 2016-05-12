@@ -125,13 +125,13 @@ app.get('/data/search-progress/:job', function(req, res) {
 });
 
 app.get('/uploadFile', function(req, res) {
-	res.sendFile('/github/nodeserver/src/view/uploadFile.html');
+	res.sendFile(__dirname + '/src/view/uploadFile.html');
 });
 
 app.post('/uploadFile/uploading', function(req, res, next) {
 	//生成multiparty对象，并配置上传目标路径
 	var form = new multiparty.Form({
-		uploadDir: './data/'
+		uploadDir: __dirname + '/data/'
 	});
 	//上传完成后处理
 	form.parse(req, function(err, fields, files) {
@@ -142,7 +142,7 @@ app.post('/uploadFile/uploading', function(req, res, next) {
 		} else {
 			var inputFile = files.inputFile[0];
 			var uploadedPath = inputFile.path;
-			var dstPath = './data/' + inputFile.originalFilename;
+			var dstPath = __dirname +'/data/' + inputFile.originalFilename;
 			//重命名为真实文件名
 			fs.rename(uploadedPath, dstPath, function(err) {
 				if (err) {
