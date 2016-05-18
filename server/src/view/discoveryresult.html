@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Update Discoveryresult</title>
+		<script src="http://apps.bdimg.com/libs/jquery/1.6.4/jquery.min.js"></script>
+		<script>
+			$(document).ready(function(){
+			    $.get("/updateFile/data/discoveryresult",function(data,status){
+			      document.getElementById('txtContent').value = data;
+			    });
+			});
+		</script>
+	</head>
+	<body>
+		<form method="get" action="/updatting/data/discoveryresult">
+			<textarea id="txtContent" name="txtContent" style="width: 720px; height: 200px; resize: none;"></textarea>
+            <input type="submit" id="btnSub" name="btnSub" value="修&nbsp;&nbsp;&nbsp;&nbsp;改"/>
+		</form>
+	</body>
+</html>

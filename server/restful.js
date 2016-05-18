@@ -2,8 +2,8 @@ var express = require('express');
 var fs = require('fs');
 var multiparty = require('multiparty');
 var util = require('util');
-var app = express(),
-	upload = express();
+var app = express();
+var dirWalker = require('./src/js/dirWalker');
 
 app.all('/data/*', function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*');
@@ -52,7 +52,7 @@ app.get('/data/add-progress/:job', function(req, res) {
 		var fileData = JSON.parse(data);
 
 		fileData.push(JSON.parse(addData));
-		fs.writeFile('progresspage.json', JSON.stringify(fileData), 'utf8', function(err) {
+		fs.writeFile('progresspage.json', JSON.parse(fileData), 'utf8', function(err) {
 			if (err) {
 				console.error(err);
 			}
@@ -72,7 +72,7 @@ app.get('/data/delete-progress/:job', function(req, res) {
 			}
 		}
 
-		fs.writeFile('progresspage.json', JSON.stringify(filedata), function(err) {
+		fs.writeFile('progresspage.json', JSON.parse(filedata), function(err) {
 			if (err) {
 				console.error(err);
 			}
@@ -103,7 +103,7 @@ app.get('/data/update-progress/:job/:progress/:thread/:triggered/:discovered/:ne
 				break;
 			}
 		}
-		fs.writeFile('progresspage.json', JSON.stringify(filedata), function(err) {
+		fs.writeFile('progresspage.json', JSON.parse(filedata), function(err) {
 			if (err) {
 				console.error(err);
 			}
@@ -124,16 +124,15 @@ app.get('/data/search-progress/:job', function(req, res) {
 	res.end(JSON.stringify(searchdata));
 });
 
+/*
+ * 文件上传
+ */
 app.get('/uploadFile', function(req, res) {
 	res.sendFile(__dirname + '/src/view/uploadFile.html');
 });
-
 app.post('/uploadFile/uploading', function(req, res, next) {
-	//生成multiparty对象，并配置上传目标路径
-	var form = new multiparty.Form({
-		uploadDir: __dirname + '/data/'
-	});
-	//上传完成后处理
+	var form = new multiparty.Form({uploadDir: __dirname + '/data/'});
+
 	form.parse(req, function(err, fields, files) {
 		var filesTmp = JSON.stringify(files, null, 2);
 
@@ -143,20 +142,93 @@ app.post('/uploadFile/uploading', function(req, res, next) {
 			var inputFile = files.inputFile[0];
 			var uploadedPath = inputFile.path;
 			var dstPath = __dirname +'/data/' + inputFile.originalFilename;
-			//重命名为真实文件名
 			fs.rename(uploadedPath, dstPath, function(err) {
 				if (err) {
 					console.log('rename error: ' + err);
 				}
 			});
 		}
-
-		res.writeHead(200, {
-			'content-type': 'text/plain;charset=utf-8'
-		});
-		res.write('上传成功');
-		res.end();
+		res.end('上传成功');
 	});
+});
+
+/*
+ * 文件列表
+ */
+app.get('/fileList',function(req,res){
+	dirWalker.walk(__dirname, 0, function (path, floor) {
+		var blankStr = '';
+		for (var i = 0; i < floor; i++) {
+			blankStr += '    ';
+		}
+	
+		fs.stat(path, function(err, stats) {
+			if (err) {
+				console.log('stat error');
+			} else {
+				var filepath = '';
+				if (stats.isDirectory()) {
+					filepath += '+' + blankStr + path;
+				} else {
+					filepath +='-' + blankStr + path;
+				}
+				res.write(JSON.stringify(filepath));
+			}
+		});
+	});
+
+});
+
+/*
+ * 删除文件
+ */
+app.get('/deleteFile/:path/:filename', function(req,res){
+	var path = __dirname + '\\' + req.params.path +'\\' + req.params.filename;
+
+	fs.unlink(path,function(){
+		console.log('Delete File Success...' + path);
+	});
+	res.end('Delete File Success...' + path);
+});
+
+/*
+ * 重命名文件
+ */
+app.get('/renameFile/:path/:oldfilename/:newfilename', function(req, res){
+	var oldfilepath = __dirname + '\\' + req.params.path + '\\' + req.params.oldfilename;
+	var newfilepath = __dirname + '\\' + req.params.path + '\\' + req.params.newfilename;
+
+	fs.rename(oldfilepath,newfilepath, function(err){
+		console.log('Rename File success...');
+	});
+	res.end('Rename File success...');
+});
+
+/*
+ *在线改JSON文件内容
+ */
+app.get('/updateFile/:filename', function(req,res){
+	res.sendFile(__dirname + '/src/view/' + req.params.filename + '.html');
+});
+app.get('/updateFile/:path/:file', function(req, res){
+    var path = req.params.path;
+    var file = req.params.file;
+
+	fs.readFile(__dirname + '\\' + path + '\\' + file + '.json','utf8', function(err, data) {
+		data = JSON.parse(data);
+		if(err){console.error(err);};
+		res.end(JSON.stringify(data));
+	});
+});
+app.get('/updatting/data/:filename', function(req, res){
+	var updateContent = req.query.txtContent;
+	var filename = req.params.filename;
+	
+	fs.writeFile(__dirname + '/data/' + filename + '.json', updateContent, 'utf8', function(err){
+		if(err){console.error(err)}
+	});
+	
+	res.end('Update File success...');
 });
 
 app.listen(8010);
