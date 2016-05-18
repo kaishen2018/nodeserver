@@ -52,7 +52,7 @@ app.get('/data/add-progress/:job', function(req, res) {
 		var fileData = JSON.parse(data);
 
 		fileData.push(JSON.parse(addData));
-		fs.writeFile('progresspage.json', JSON.parse(fileData), 'utf8', function(err) {
+		fs.writeFile('progresspage.json', JSON.stringify(fileData), 'utf8', function(err) {
 			if (err) {
 				console.error(err);
 			}
@@ -72,7 +72,7 @@ app.get('/data/delete-progress/:job', function(req, res) {
 			}
 		}
 
-		fs.writeFile('progresspage.json', JSON.parse(filedata), function(err) {
+		fs.writeFile('progresspage.json', JSON.stringify(filedata), function(err) {
 			if (err) {
 				console.error(err);
 			}
@@ -103,7 +103,7 @@ app.get('/data/update-progress/:job/:progress/:thread/:triggered/:discovered/:ne
 				break;
 			}
 		}
-		fs.writeFile('progresspage.json', JSON.parse(filedata), function(err) {
+		fs.writeFile('progresspage.json', JSON.stringify(filedata), function(err) {
 			if (err) {
 				console.error(err);
 			}
@@ -155,35 +155,62 @@ app.post('/uploadFile/uploading', function(req, res, next) {
 /*
  * 文件列表
  */
-app.get('/fileList',function(req,res){
-	dirWalker.walk(__dirname, 0, function (path, floor) {
-		var blankStr = '';
-		for (var i = 0; i < floor; i++) {
-			blankStr += '    ';
-		}
-	
-		fs.stat(path, function(err, stats) {
-			if (err) {
-				console.log('stat error');
-			} else {
-				var filepath = '';
-				if (stats.isDirectory()) {
-					filepath += '+' + blankStr + path;
-				} else {
-					filepath +='-' + blankStr + path;
-				}
-				res.write(JSON.stringify(filepath));
+app.get('/fileList/data',function(req,res){
+	function geFileList(path)
+	{
+		var filesList = [];
+		readFile(path,filesList);
+		return filesList;
+	}
+	function readFile(path,filesList)
+	{
+		files = fs.readdirSync(path);//需要用到同步读取
+		files.forEach(walk);
+		function walk(file)
+		{
+			states = fs.statSync(path+'/'+file);
+			if(states.isDirectory())
+			{
+				readFile(path+'/'+file,filesList);
 			}
-		});
-	});
+			else
+			{
+				//创建一个对象保存信息
+				var obj = new Object();
+				obj.size = states.size;//文件大小，以字节为单位
+				obj.name = file;//文件名
+				obj.path = path+'/'+file; //文件绝对路径
+				filesList.push(obj);
+			}
+		}
+	}
 
+	var filesList = geFileList(__dirname + '/data');
+	filesList.sort(sortHandler);
+	function sortHandler(a,b)
+	{
+		if(a.size > b.size)
+			return -1;
+		else if(a.size < b.size) return 1;
+		return 0;
+	}
+	var str='';
+	for(var i=0;i<filesList.length;i++)
+	{
+		var item = filesList[i];
+		var desc ="文件名:  "+item.name + " "
+			+"           大小:  "+(item.size/1024).toFixed(2) +"/kb";
+		str+=desc +"\n";
+		// res.write(JSON.stringify(desc));
+	}
+	res.end(str);
 });
 
 /*
  * 删除文件
  */
 app.get('/deleteFile/:path/:filename', function(req,res){
-	var path = __dirname + '\\' + req.params.path +'\\' + req.params.filename;
+	var path = __dirname + '/' + req.params.path +'/' + req.params.filename;
 
 	fs.unlink(path,function(){
 		console.log('Delete File Success...' + path);
@@ -195,8 +222,8 @@ app.get('/deleteFile/:path/:filename', function(req,res){
  * 重命名文件
  */
 app.get('/renameFile/:path/:oldfilename/:newfilename', function(req, res){
-	var oldfilepath = __dirname + '\\' + req.params.path + '\\' + req.params.oldfilename;
-	var newfilepath = __dirname + '\\' + req.params.path + '\\' + req.params.newfilename;
+	var oldfilepath = __dirname + '/' + req.params.path + '/' + req.params.oldfilename;
+	var newfilepath = __dirname + '/' + req.params.path + '/' + req.params.newfilename;
 
 	fs.rename(oldfilepath,newfilepath, function(err){
 		console.log('Rename File success...');
@@ -214,7 +241,7 @@ app.get('/updateFile/:path/:file', function(req, res){
     var path = req.params.path;
     var file = req.params.file;
 
-	fs.readFile(__dirname + '\\' + path + '\\' + file + '.json','utf8', function(err, data) {
+	fs.readFile(__dirname + '/' + path + '/' + file + '.json','utf8', function(err, data) {
 		data = JSON.parse(data);
 		if(err){console.error(err);};
 		res.end(JSON.stringify(data));
